@@ -1,0 +1,49 @@
+* {
+  box-sizing: border-box;
+}
+#board {
+  border: 1px solid black;
+  margin: 0 auto;
+  height: 500px;
+  width: 500px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.tiles {
+  background-color: aliceblue;
+  border: 1px solid black;
+  width: 25%;
+}
+.wrap {
+  margin: 0 auto;
+}
+.round {
+  background: #000;
+  padding-top: 1rem;
+  margin-bottom: 1rem;
+  color: white;
+  text-align: center;
+  width: 300px;
+  height: 3rem;
+  border-radius: 1rem;
+}
+.controllers {
+  text-align: center;
+  margin: 3rem 0;
+}
+.start  {
+  background: cadetblue;
+  color: white;
+  border: none;
+}
+button {
+  margin: .3rem;
+  width: 120px;
+  height: 2.7rem;
+  border: none;
+  border-radius: .5rem;
+  background: white;
+  border: 1px solid black;
+}

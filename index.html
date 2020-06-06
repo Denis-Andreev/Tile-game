@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<script src="game.js" defer></script>
+<body>
+<div class="controllers">
+    <button class="start" onclick="startGame()">Start</button>
+    <button class="showTiles" onclick="showAllTiles()">Show all tiles</button>
+    <button class="hideTiles" onclick="hideAllTiles()">Hide all tiles</button>
+</div>
+<div class="round wrap">Round: <span class="roundState">0</span></div>
+<div class="wrap">
+    <div id="board">
+
+    </div>
+</div>
+</body>
+</html>
