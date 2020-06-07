@@ -7,7 +7,7 @@ function getRandomInt(min, max) {
 
 function getRandomColors(colorsCount) {
     let colorsArray = new Array(colorsCount).fill(null);
-    return colorsArray.map(elem => elem = "#"+(Math.random()*16**6).toString(16).substr(0,6))
+    return colorsArray.map(elem => elem = '#' + (Math.random().toString(16) + '000000').substring(2,8).toUpperCase())
 }
 
 
