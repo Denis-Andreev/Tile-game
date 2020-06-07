@@ -17,6 +17,7 @@ let Board = [];
 let tilesCount = 16; //4, 16, 64,
 let boardNode = document.querySelector('#board');
 let roundStateNode = document.querySelector(".roundState");
+let numberOfAttempts;
 
 function setGameLvl() {
     let lvl = +document.getElementById("gameLvl").value;
@@ -65,8 +66,7 @@ function setTilesColor(tilesCount) {
 
 function startGame(tilesCount) {
     Board = [];
-    // Новая игра - новые цвета
-    // New game - new colors
+    numberOfAttempts = tilesCount/2;
     setTilesColor(tilesCount);
 
     roundStateNode.innerHTML = 1;
@@ -97,6 +97,8 @@ function renderBoard(Board) {
     for(let i = 0; i < Board.length; i++) {
         if(tilesState[i].opened == true) {
             Board[i].style.backgroundColor = tilesState[i].color;
+        } else {
+            Board[i].style.backgroundColor = '';
         }
         boardNode.appendChild(Board[i]);
     }
@@ -136,6 +138,11 @@ function showTile(id) {
     selectedColors.push(tilesState[id].color);
     tilesState[id].opened = true;
 }
+function hideTile(id) {
+    tilesState[id].opened = false;
+}
+
+let prevTileId;
 
 function gameHandler(e) {
     let tileId = e.target.id;
@@ -147,19 +154,30 @@ function gameHandler(e) {
     MOVES_COUNT++;
     if(MOVES_COUNT < 3) {
         showTile(tileId);
-
         if(MOVES_COUNT == 2) {
             if (selectedColors[0] == selectedColors[1]) {
                 if(isWin()) {
-                    showGameInfo("You won!");
+                    showGameInfo("You won! Your score: "+ tilesCount*(numberOfAttempts+1));
                     resetGame();
                 } else {
                     showGameInfo("Moving on to the next round!");
                     roundStateNode.innerHTML = +roundStateNode.innerHTML + 1;
                 }
             } else {
-                showGameInfo('You lost!');
-                setTimeout(resetGame, 1000);
+                if(!numberOfAttempts) {
+                    setTimeout(resetGame, 1000);
+                    showGameInfo('You lost!')
+                } else {
+                    showGameInfo('Different tiles!'+(--numberOfAttempts)+' attempts left');
+                    selectedColors = [];
+                    MOVES_COUNT = 0;
+                    let prevTileIdAsync = prevTileId;
+                    setTimeout(()=> {
+                        hideTile(tileId);
+                        hideTile(prevTileIdAsync)
+                        renderBoard(Board);
+                    }, 1000)
+                }
             }
 
         }
@@ -171,7 +189,7 @@ function gameHandler(e) {
 
         }
     }
-
+    prevTileId = tileId;
     renderBoard(Board);
 }
 
