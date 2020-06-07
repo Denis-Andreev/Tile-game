@@ -6,12 +6,22 @@ function getRandomInt(min, max) {
 }
 
 function getRandomColors(colorsCount) {
-    let colorsArray = new Array(8).fill(null);
+    let colorsArray = new Array(colorsCount).fill(null);
     return colorsArray.map(elem => elem = "#"+(Math.random()*16**6).toString(16).substr(0,6))
 }
 
 
 
+let tilesState;
+let Board = [];
+let tilesCount = 16; //4, 16, 64,
+let boardNode = document.querySelector('#board');
+let roundStateNode = document.querySelector(".roundState");
+
+function setGameLvl() {
+    let lvl = +document.getElementById("gameLvl").value;
+    tilesCount = lvl;
+}
 
 function boardIsFill(board) {
     for (elem of board) {
@@ -22,19 +32,14 @@ function boardIsFill(board) {
     return true;
 }
 
-let tilesState;
-let Board = [];
-let boardNode = document.querySelector('#board');
-let roundStateNode = document.querySelector(".roundState");
-
-function setTilesColor() {
-    tilesState = new Array(16).fill({color: 0, opened: false});
-    let colors = getRandomColors(8);
+function setTilesColor(tilesCount) {
+    tilesState = new Array(tilesCount).fill({color: 0, opened: false});
+    let colors = getRandomColors(tilesCount/2);
     let usedColors = [];
     while(!boardIsFill(tilesState)) {
         for(let i = 0; i < tilesState.length; i++) {
             if(tilesState[i].color == 0) {
-                let color = colors[getRandomInt(0,8)];
+                let color = colors[getRandomInt(0,tilesCount/2)];
                 let colorCount = 0;
                 // Подсчет уже использованных цветов(для парности)
                 // Counting already used colors(for pairs)
@@ -57,11 +62,12 @@ function setTilesColor() {
         }
     }
 }
-function startGame() {
+
+function startGame(tilesCount) {
     Board = [];
     // Новая игра - новые цвета
     // New game - new colors
-    setTilesColor();
+    setTilesColor(tilesCount);
 
     roundStateNode.innerHTML = 1;
 
@@ -72,7 +78,36 @@ function startGame() {
         Board.push(tiles);
     })
     renderBoard(Board);
+    setWH(tilesCount);
 }
+function setWH(tilesCount) {
+    let WH = 100 / Math.sqrt(tilesCount) + '%';
+    for(let i = 0; i < tilesCount; i++) {
+        let node = document.getElementById(i+'');
+        node.style.width = WH;
+        node.style.height = WH;
+    }
+}
+
+
+function renderBoard(Board) {
+    while(boardNode.firstChild) {
+        boardNode.removeChild(boardNode.firstChild);
+    }
+    for(let i = 0; i < Board.length; i++) {
+        if(tilesState[i].opened == true) {
+            Board[i].style.backgroundColor = tilesState[i].color;
+        }
+        boardNode.appendChild(Board[i]);
+    }
+}
+
+// Game controllers
+document.addEventListener('keypress',function(e) {
+    e.code === 'KeyS' && startGame(tilesCount);
+    e.code === 'KeyQ' && showAllTiles();
+    e.code === 'KeyW' && hideAllTiles();
+})
 
 
 function showAllTiles() {
@@ -87,55 +122,67 @@ function hideAllTiles() {
         }
     })
 }
-function renderBoard(Board) {
-    while(boardNode.firstChild) {
-        boardNode.removeChild(boardNode.firstChild);
-    }
-    for(let i = 0; i < Board.length; i++) {
-        if(tilesState[i].opened == true) {
-            Board[i].style.backgroundColor = tilesState[i].color;
-        }
-        boardNode.appendChild(Board[i]);  // boardNode.append(...Board);
-    }
-}
 
 // Контроль над игрой
 // Control over the game
 let MOVES_COUNT = 0;
 let selectedColors = [];
+
 boardNode.onclick = (e) => {
     gameHandler(e);
 }
+
 function showTile(id) {
     selectedColors.push(tilesState[id].color);
     tilesState[id].opened = true;
 }
+
 function gameHandler(e) {
-    tileId = e.target.id;
+    let tileId = e.target.id;
+
+    if(tilesState[tileId].opened) {
+        return;
+    }
+
     MOVES_COUNT++;
     if(MOVES_COUNT < 3) {
         showTile(tileId);
-    } else {
-        if (selectedColors[0] == selectedColors[1]) {
 
-            if(isWin()) {
-                alert("You won!");
-                resetGame();
+        if(MOVES_COUNT == 2) {
+            if (selectedColors[0] == selectedColors[1]) {
+                if(isWin()) {
+                    showGameInfo("You won!");
+                    resetGame();
+                } else {
+                    showGameInfo("Moving on to the next round!");
+                    roundStateNode.innerHTML = +roundStateNode.innerHTML + 1;
+                }
             } else {
-                alert("Moving on to the next round!");
-                roundStateNode.innerHTML = +roundStateNode.innerHTML + 1;
+                showGameInfo('You lost!');
+                setTimeout(resetGame, 1000);
             }
 
+        }
+    } else {
+        if (selectedColors[0] == selectedColors[1]) {
             selectedColors = [];
             showTile(tileId);
             MOVES_COUNT = 1;
 
-        } else {
-            alert('You lost!');
-            resetGame();
         }
     }
+
     renderBoard(Board);
+}
+
+function showGameInfo(infoBody) {
+    let infoContainer = document.querySelector('#infoContainer');
+    let infoBox = document.createElement("div");
+    infoBox.innerText = infoBody;
+    infoBox.className = 'gameInfo';
+    infoContainer.appendChild(infoBox);
+    setTimeout(() => infoContainer.removeChild(infoBox), 2000);
+
 }
 
 function isWin() {
@@ -153,6 +200,5 @@ function resetGame() {
     tilesState.forEach((elem, index) => elem.opened = false);
     Board = [];
     boardNode.innerHTML = null;
-    roundStateNode.innerHTML = 0;
+    roundStateNode.innerHTML = '0';
 }
-console.log(tilesState);

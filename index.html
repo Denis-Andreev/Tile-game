@@ -11,12 +11,29 @@
 <script src="game.js" defer></script>
 <body>
 <div class="controllers">
-    <button class="start" onclick="startGame()">Start</button>
-    <button class="showTiles" onclick="showAllTiles()">Show all tiles</button>
-    <button class="hideTiles" onclick="hideAllTiles()">Hide all tiles</button>
+    <div>
+        <p>
+            <b>Select the game level:</b>
+            <br>
+            Easy - 4 tiles
+            <br>
+            Normal - 16 tiles
+            <br>
+            Hard - 64 tiles
+        </p>
+        <select name="gameLvl" id="gameLvl" onclick="setGameLvl()">
+            <option value="4">Easy</option>
+            <option value="16" selected>Normal</option>
+            <option value="64">Hard</option>
+        </select>
+    </div>
+    <button class="start" onclick="startGame(tilesCount)">Start(S)</button>
+    <button class="showTiles" onclick="showAllTiles()">Show all tiles(Q)</button>
+    <button class="hideTiles" onclick="hideAllTiles()">Hide all tiles(W)</button>
 </div>
 <div class="round wrap">Round: <span class="roundState">0</span></div>
 <div class="wrap">
+    <div id="infoContainer"></div>
     <div id="board">
 
     </div>
