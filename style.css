@@ -37,6 +37,7 @@ body {
   text-align: center;
   margin: 3rem 0;
 }
+
 #gameLvl {
   margin-bottom: 2rem;
 }
@@ -55,7 +56,9 @@ button {
   border: 1px solid black;
 }
 
-
+#infoContainer {
+  height: 2rem;
+}
 @media screen and (max-width: 550px) {
   #board {
     width: 500px;
